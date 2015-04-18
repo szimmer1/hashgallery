@@ -1,0 +1,17 @@
+{
+  "name": "hashgallery",
+  "version": "0.0.1",
+  "authors": [
+    "Shahar Zimmerman <szimmer1@ucsc.edu>"
+  ],
+  "description": "Your personal 3d art gallery",
+  "license": "MIT",
+  "homepage": "szimmer1.github.io/hashgallery",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

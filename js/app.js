@@ -6,17 +6,19 @@
 
     angular.module('app', ['ui.router', 'home', 'gallery'])
 
+        .value('firebaseUrl', window.firebaseUrl)
+
         .config(function($stateProvider, $urlRouterProvider) {
             $stateProvider
                 .state('home', {
                     url: '/home',
                     templateUrl: 'views/home.html',
-                    controller: 'HomeController'
+                    controller: 'HomeController as home'
                 })
                 .state('gallery', {
                     url: '/artist/:name',
                     templateUrl: 'views/gallery.html',
-                    controller: 'GalleryController'
+                    controller: 'GalleryController as gallery'
                 });
 
             $urlRouterProvider

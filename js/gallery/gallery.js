@@ -4,60 +4,72 @@
 
 (function(angular) {
 
-    angular.module('gallery', [])
+    angular.module('gallery', ['firebase', 's3Service'])
 
-        .factory('awsService', function() {
+        .controller('GalleryController', function($scope, $stateParams, awsService, $firebaseObject, firebaseUrl) {
 
-            if (!AWS) {
-                alert("AWS SDK not found!");
-                return
-            }
+                $scope.name = $stateParams.name;
 
-            function h(direction, input) {
-                if (direction === 'in') {
-                    var hash = "";
-                    _(input.length).times(function(i) {
-                        var n = input.charCodeAt(i);
-                        hash = hash.concat(n);
+                var artistRef = new Firebase(firebaseUrl+'/'+$scope.name);
+
+                // load artist data
+                var artistData = $firebaseObject(artistRef);
+                artistData.$loaded().then(function() {
+                    artistData.$bindTo($scope, 'imageData');
+                });
+
+                $scope.makeGallery = function() {
+                    if (!artistData.galleryCreated) {
+                        artistData.galleryCreated = (new Date().toString());
+                        artistData.fileCount = 0;
+                        artistData.$save();
+                    }
+                };
+
+                $scope.files = {};
+                $scope.bucket = awsService.s3Init(window.s3id, window.s3secret, window.region, window.bucket);
+
+                // takes files object, every time a file is uploaded, callback is called
+                $scope.upload = function() {
+                    if (!artistData.galleryCreated) {
+                        alert('tried to upload before gallery was created');
+                        return;
+                    }
+                    else if (_.isEmpty($scope.files)) {
+                        alert('no file(s) selected');
+                        return;
+                    }
+                    awsService.s3Upload($scope.files, function(data, err) {
+                        if (err) {
+                            alert("s3Upload: "+err)
+                        }
+                        else {
+                            debugger;
+                            artistData[artistData.fileCount] = {
+                                key: data.key,
+                                uploaded: data.uploaded
+                            };
+                        }
+                        artistData.fileCount++;
                     });
-                    return hash;
-                }
-                else if (direction === 'out') {
-                    var key = "";
-                    _(input.length).times(function(i) {
-                        var n = input.charCodeAt(i);
-                        key = key.concat(n);
-                    });
-                    return key;
-                }
-            }
+                    artistData.$save();
+                };
+                $scope.uploadProgress = awsService.uploadProgress;
 
+            })
+
+        .directive('galleryUpload', function() {
             return {
-                s3Init: function(id, secret) {
-                    AWS.config.update({
-                        accessKeyId: id,
-                        secretAccessKey: secret
-                    });
-                },
-
-                s3Upload: function(id, secret, files) {
-                },
-
-                getImageUrl: function(files) {
+                restrict: 'AE',
+                scope: true,
+                link: function(scope, element, attr) {
+                    element.bind('change', function(event) {
+                        scope.files = event.target.files;
+                        scope.$parent.files = event.target.files;
+                        scope.$apply();
+                    })
                 }
             }
         })
-
-        .controller('GalleryController', ['$scope', '$stateParams', 'awsService',
-            function($scope, $stateParams, awsService) {
-
-                awsService.s3Init(window.s3id, window.s3secret);
-
-                $scope.name = $stateParams.name;
-                $scope.test = "This is the GalleryController from the gallery module";
-
-                $scope.upload = awsService.s3Upload;
-
-            }])
 
 })(angular);

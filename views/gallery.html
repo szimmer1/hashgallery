@@ -1,1 +1,14 @@
 <p>Here is {{name}}'s gallery</p>
+<p>File {{uploadProgress.fileCount}} is {{uploadProgress.progress}}% done</p>
+<p>
+    <input type="file" gallery-upload multiple />
+    <button ng-click="upload()">Upload</button>
+</p>
+<textarea ng-if="imageData.galleryCreated" style="height:300px; width: 250px;">
+    {{imageData | json}}
+</textarea>
+
+<div ng-if="!imageData.galleryCreated">
+    <p>You haven't made a gallery yet.</p>
+    <button ng-click="makeGallery()">Make gallery</button>
+</div>

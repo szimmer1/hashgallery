@@ -7,6 +7,7 @@
     angular.module('app', ['ui.router', 'home', 'gallery'])
 
         .value('firebaseUrl', window.firebaseUrl)
+        .value('s3Url', 'https://s3-'+window.region+'.amazonaws.com/'+window.bucket+'/')
 
         .config(function($stateProvider, $urlRouterProvider) {
             $stateProvider

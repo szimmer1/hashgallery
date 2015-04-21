@@ -28,6 +28,12 @@
                 }
             }
 
+            function isImg(ext) {
+                var i = ext.indexOf("/");
+                var e = ext.slice(i === -1 ? 0 : i+1, ext.length);
+                return e === "png" || e === "jpg" || e === "jpeg" || e === "gif"
+            }
+
             var awsbucket = new AWS.S3();
             var uploadProgress = {
                 progress: 0,
@@ -55,7 +61,13 @@
                     uploadProgress.fileCount = 1;
                     _.each(files, function(file, key) {
                         var uniqueName = (new Date()).getTime() + "-" + file.name;
-                        if (file.size < 1000000) {
+                        if (file.size > 999999) {
+                            alert('files must be under 1mb')
+                        }
+                        else if (!isImg(file.type)) {
+                            alert('file is not an image')
+                        }
+                        else {
                             awsbucket.putObject({
                                 Key: uniqueName,
                                 ContentType: file.type,
@@ -69,18 +81,16 @@
                                     console.log('s3Upload: success');
                                     successCallback({
                                         key: uniqueName,
+                                        type: file.type,
                                         uploaded: (new Date()).toString()
                                     }, err)
                                 }
                             }).on('httpUploadProgress', function(progress) {
                                 uploadProgress.progress = progress;
-                            })
+                            });
                             uploadProgress.fileCount++;
                         }
-                        else {
-                            alert('Pictures must be under 1mb')
-                        }
-                    })
+                    });
                     uploadProgress.fileCount = 1;
                 },
 

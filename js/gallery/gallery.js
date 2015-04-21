@@ -6,7 +6,15 @@
 
     angular.module('gallery', ['firebase', 's3Service'])
 
-        .controller('GalleryController', function($scope, $stateParams, awsService, $firebaseObject, firebaseUrl) {
+        .controller('GalleryController', function(
+            $scope,
+            $stateParams,
+            awsService,
+            $firebaseObject,
+            $firebaseArray,
+            firebaseUrl,
+            s3Url
+        ) {
 
                 $scope.name = $stateParams.name;
 
@@ -14,6 +22,7 @@
 
                 // load artist data
                 var artistData = $firebaseObject(artistRef);
+                artistData.images = $firebaseArray(artistRef.child('/images'));
                 artistData.$loaded().then(function() {
                     artistData.$bindTo($scope, 'imageData');
                 });
@@ -39,33 +48,43 @@
                         alert('no file(s) selected');
                         return;
                     }
+                    else if (artistData.fileCount > 4) {
+                        alert('for now, #gallery allows up to 4 artworks');
+                        return;
+                    }
                     awsService.s3Upload($scope.files, function(data, err) {
                         if (err) {
                             alert("s3Upload: "+err)
                         }
                         else {
-                            debugger;
-                            artistData[artistData.fileCount] = {
+                            artistData.images.$add({
                                 key: data.key,
+                                type: data.type,
                                 uploaded: data.uploaded
-                            };
+                            }).then(function() {
+                                artistData.fileCount++;
+                                artistData.$save();
+                            });
                         }
-                        artistData.fileCount++;
                     });
-                    artistData.$save();
                 };
+
                 $scope.uploadProgress = awsService.uploadProgress;
+
+                $scope.localImage = false;
 
             })
 
         .directive('galleryUpload', function() {
             return {
                 restrict: 'AE',
-                scope: true,
                 link: function(scope, element, attr) {
                     element.bind('change', function(event) {
+                        // update files object
                         scope.files = event.target.files;
-                        scope.$parent.files = event.target.files;
+
+                        //update local image
+                        scope.localImage = URL.createObjectURL(event.target.files[0]);
                         scope.$apply();
                     })
                 }

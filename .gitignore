@@ -2,5 +2,7 @@
 .DS_Store
 bower_components
 keys.js
+keys.json
 node_modules
 ec2_shahar.pem
+public/lib

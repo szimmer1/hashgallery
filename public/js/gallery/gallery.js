@@ -7,18 +7,17 @@
     angular.module('gallery', ['firebase', 's3Service'])
 
         .controller('GalleryController', function(
+            $rootScope,
             $scope,
             $stateParams,
             awsService,
             $firebaseObject,
-            $firebaseArray,
-            firebaseUrl,
-            s3Url
+            $firebaseArray
         ) {
 
                 $scope.name = $stateParams.name;
 
-                var artistRef = new Firebase(firebaseUrl+'/'+$scope.name);
+                var artistRef = new Firebase($rootScope.keys.firebaseUrl+$scope.name);
 
                 // load artist data
                 var artistData = $firebaseObject(artistRef);
@@ -36,7 +35,8 @@
                 };
 
                 $scope.files = {};
-                $scope.bucket = awsService.s3Init(window.s3id, window.s3secret, window.region, window.bucket);
+                $scope.bucket = awsService.s3Init($rootScope.keys.s3id, $rootScope.keys.s3secret,
+                    $rootScope.keys.region, $rootScope.keys.bucket);
 
                 // takes files object, every time a file is uploaded, callback is called
                 $scope.upload = function() {

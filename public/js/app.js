@@ -6,25 +6,34 @@
 
     angular.module('app', ['ui.router', 'home', 'gallery'])
 
-        .value('firebaseUrl', window.firebaseUrl)
-        .value('s3Url', 'https://s3-'+window.region+'.amazonaws.com/'+window.bucket+'/')
-
         .config(function($stateProvider, $urlRouterProvider) {
+
             $stateProvider
                 .state('home', {
                     url: '/home',
-                    templateUrl: 'views/home.html',
+                    templateUrl: '../views/home.html',
                     controller: 'HomeController as home'
                 })
                 .state('gallery', {
                     url: '/artist/:name',
-                    templateUrl: 'views/gallery.html',
+                    templateUrl: '../views/gallery.html',
                     controller: 'GalleryController as gallery'
                 });
 
             $urlRouterProvider
                 .when('/artist', '/artist')
                 .otherwise('/home');
+
+        })
+
+        .run(function($rootScope, $http, $location) {
+
+            $http.get($location.protocol() + "://" + window.location.host+"/api/keys")
+            .success( function(data, status) {
+                $rootScope.keys = JSON.parse(data);
+            }).error( function(data, status) {
+                alert("Error on retreiving keys; "+status)
+            });
 
         })
 

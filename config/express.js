@@ -1,17 +1,20 @@
 var express = require('express'),
-    util = require('util'),
-    http = require('http');
+    path = require('path'),
+    api = require(path.resolve('./config/routes/api'));
+    _ = require('underscore');
 
 module.exports = function() {
 
-    var port = process.env.NODE_ENV == 'development' ? 8000 : 80;
+    var app = express();
 
-    http.createServer(function (req, res) {
-        res.writeHead(200, {'Content-Type': 'text/plain'});
-        res.write('hello world!');
-        res.end();
-    }).listen(port);
+    app.use(express.static(path.resolve('./public')));
 
-    util.puts('server running on port 8000')
+    app.use('/api/keys', api.keys);
+
+    app.get('/', function(req,res) {
+        res.sendFile(path.resolve('./public/views/index.html'));
+    });
+
+    return app;
 
 };

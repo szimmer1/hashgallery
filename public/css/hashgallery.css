@@ -1,0 +1,50 @@
+/* Requires bootstrap */
+
+/* Gallery styles */
+input {
+        display: inline-block !important;
+}
+
+canvas {
+        width: 100%;
+        height: 100%;
+}
+
+.container {
+        margin:0px !important;
+        padding: 0px !important;
+        width: 100%;
+}
+
+.generate-scene {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 100px;
+}
+
+.img-sidebar {
+        float: right;
+        margin-right: 30px;
+}
+
+.upload-preview {
+
+}
+
+.file-upload {
+        margin-top: 20px;
+        margin-bottom: 20px;
+}
+
+.fa-times {
+        cursor: pointer;
+}
+.fa-times:hover {
+        color: red;
+}
+
+.welcome-row {
+        margin-top: 20px;
+        margin-bottom: 20px;
+}

@@ -1,11 +1,11 @@
 (function(angular) {
 
-    angular.module('s3Service', [])
+    angular.module('s3Service', ['todoError'])
 
-        .factory('awsService', function() {
+        .factory('awsService', function(errorService) {
 
             if (!AWS) {
-                alert("AWS SDK not found!");
+                errorService.setError('Script not found',"AWS SDK not found!");
                 return
             }
 
@@ -62,10 +62,10 @@
                     _.each(files, function(file, key) {
                         var uniqueName = (new Date()).getTime() + "-" + file.name;
                         if (file.size > 999999) {
-                            alert('files must be under 1mb')
+                            errorService.setError('Error','files must be under 1mb')
                         }
                         else if (!isImg(file.type)) {
-                            alert('file is not an image')
+                            errorService.setError('Error','file is not an image')
                         }
                         else {
                             awsbucket.putObject({
@@ -75,7 +75,7 @@
                                 ServerSideEncryption: 'AES256'
                             }, function(err, data) {
                                 if (err) {
-                                    alert("s3Upload: "+err.message)
+                                    errorService.setError('Error',"s3Upload: "+err.message)
                                 }
                                 else {
                                     console.log('s3Upload: success');

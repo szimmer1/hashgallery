@@ -6,3 +6,4 @@ keys.json
 node_modules
 ec2_shahar.pem
 public/lib
+ec2.sh

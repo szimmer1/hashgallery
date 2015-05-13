@@ -1,8 +1,10 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <p>Here is the home page</p>
-            <p>Check out <a href="/#/artist/shaharzimmerman">Shahar's</a> #gallery!</p>
+            <div class="jumbotron">
+                Check out {{name}}'s #gallery!<br>
+                <input type="text" ng-model="name">  <button class="btn btn-primary" ng-click="goGallery()">Submit</button>
+            </div>
         </div>
     </div>
 </div>

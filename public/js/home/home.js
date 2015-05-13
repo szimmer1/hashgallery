@@ -6,9 +6,12 @@
 
     angular.module('home', [])
 
-        .controller('HomeController', ['$scope', '$stateParams', function($scope, $stateParams) {
+        .controller('HomeController', ['$scope', '$stateParams', '$location', function($scope, $stateParams, $location) {
 
-            $scope.test = "This is the HomeController from the home module"
+            $scope.name = "";
+            $scope.goGallery = function() {
+                $location.url('/artist/'+$scope.name.split(' ').join('%20'))
+            }
 
         }])
 

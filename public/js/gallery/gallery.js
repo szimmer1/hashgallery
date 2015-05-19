@@ -2,11 +2,21 @@
  * Created by mzimmerman on 4/17/15.
  */
 
-(function(angular, THREE) {
+(function(angular) {
 
     angular.module('gallery', ['firebase', 's3Service', 'todoError', 'threeService'])
 
-        .controller('GalleryController', function(
+        .controller('GalleryController', [
+            '$rootScope',
+            '$scope',
+            '$stateParams',
+            'awsService',
+            'errorService',
+            'threejsService',
+            '$firebaseObject',
+            '$firebaseArray',
+
+            function(
             $rootScope,
             $scope,
             $stateParams,
@@ -14,10 +24,7 @@
             errorService,
             threejsService,
             $firebaseObject,
-            $firebaseArray,
-            cWidth,
-            cHeight,
-            $window
+            $firebaseArray
         ) {
                 $scope.name = $stateParams.name;
 
@@ -25,14 +32,22 @@
 
                 // load artist data
                 var artistData = $firebaseObject(artistRef);
+                artistData.galleryCreated = false;
                 var imageData = $firebaseArray(artistRef.child('/images'));
                 artistData.$loaded().then(function() {
                     artistData.$bindTo($scope, 'artistData');
                 });
 
+                $scope.description = "";
+
                 $scope.makeGallery = function() {
-                    if (!artistData.galleryCreated) {
+                    if (!artistData.galleryCreated && this.description) {
+                        if (this.description.length > 200) {
+                            errorService.setError("Error", "Description is too long");
+                            return;
+                        }
                         artistData.galleryCreated = (new Date().toString());
+                        artistData.description = this.description;
                         artistData.fileCount = 0;
                         artistData.$save();
                     }
@@ -46,7 +61,7 @@
                 // takes files object, every time a file is uploaded, callback is called
                 $scope.upload = function() {
                     if (!artistData.galleryCreated) {
-                        this.flashError('Error','tried to upload before gallery was created');
+                        errorService.setError('Error','tried to upload before gallery was created');
                         return;
                     }
                     else if (_.isEmpty($scope.files)) {
@@ -62,17 +77,17 @@
                             errorService.setError('Error', "s3Upload: "+err)
                         }
                         else {
+                            console.log("s3Upload: success");
                             var parsedKey = data.key.split(" ").join("+");
 
+                            artistData.fileCount++;
+                            artistData.$save();
                             imageData.$add({
                                 key: data.key,
                                 type: data.type,
                                 url: $rootScope.keys.s3domain + parsedKey,
                                 uploaded: data.uploaded
-                            }).then(function() {
-                                artistData.fileCount++;
-                                artistData.$save();
-                            });
+                            })
 
                             //errorService.setError("Upload success!");
                             $scope.localImage = false;
@@ -81,55 +96,21 @@
                 };
 
                 $scope.truncImage = function() {
-                    imageData.$remove(this.$index).then(function() {
-                        artistData.fileCount--;
-                        artistData.$save();
-                    })
-                }
-
-                $scope.generate = function() {
-                    threejsService.resetScene();
-                    var cameraIdx = threejsService.newCamera(75,cWidth/cHeight,0.1,1000);
-                    this.setupRenderer();
-
-                    var material = new THREE.MeshBasicMaterial({color:0xffff00});
-                    var geo = new THREE.BoxGeometry(1.0,1.0,1.0);
-                    var obj = new THREE.Mesh( geo, material);
-
-                    threejsService.world.scene.add(obj);
-                    threejsService.world.cameras[cameraIdx].position.z = 5.0;
-
-                    var render = function() {
-                        $window.requestAnimationFrame(render);
-
-                        obj.rotation.x += 0.01;
-                        obj.rotation.z += 0.01;
-
-                        threejsService.world.renderer.render(threejsService.world.scene,threejsService.world.cameras[cameraIdx])
-                    };
-
-                    render();
-                    /*
-                    threejsService.addMaterial('flatGreen', 'MeshBasic', {'color':0xffff00});
-                    threejsService.addObject('box',threejsService.world.materials.flatGreen, {
-                        'width':5,
-                        'height':5,
-                        'depth':5
-                    })
-                    */
-                }
-
-            })
+                    artistData.fileCount--;
+                    artistData.$save();
+                    imageData.$remove(this.$index)
+                };
+            }])
 
         .directive('hashgalleryRenderer', function(threejsService, cWidth, cHeight) {
             return {
                 restrict: 'AE',
                 link: function(scope, ele, attr) {
-                    scope.setupRenderer = function() {
-                        threejsService.renderer(cWidth, cHeight);
-                        threejsService.world.renderer.setSize(cWidth, cHeight);
+                    scope.generate = function() {
                         $(ele).find('button').remove();
-                        $(ele).append(threejsService.world.renderer.domElement);
+                        threejsService.world.setDim(cWidth, cHeight);
+                        $(ele).append(threejsService.world.getDomElement());
+                        threejsService.animate()
                     }
                 }
             }
@@ -151,4 +132,4 @@
             }
         })
 
-})(angular, THREE);
+})(angular);

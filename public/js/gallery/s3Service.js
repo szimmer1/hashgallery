@@ -74,20 +74,12 @@
                                 Body: file,
                                 ServerSideEncryption: 'AES256'
                             }, function(err, data) {
-                                if (err) {
-                                    errorService.setError('Error',"s3Upload: "+err.message)
-                                }
-                                else {
-                                    console.log('s3Upload: success');
                                     successCallback({
                                         key: uniqueName,
                                         type: file.type,
                                         uploaded: (new Date()).toString()
                                     }, err)
-                                }
-                            }).on('httpUploadProgress', function(progress) {
-                                uploadProgress.progress = progress;
-                            });
+                            })
                             uploadProgress.fileCount++;
                         }
                     });

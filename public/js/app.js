@@ -14,12 +14,12 @@
                 .state('home', {
                     url: '/home',
                     templateUrl: '../views/home.html',
-                    controller: 'HomeController as home'
+                    controller: 'HomeController'
                 })
                 .state('gallery', {
                     url: '/artist/:name',
                     templateUrl: '../views/gallery.html',
-                    controller: 'GalleryController as gallery'
+                    controller: 'GalleryController'
                 });
 
             $urlRouterProvider

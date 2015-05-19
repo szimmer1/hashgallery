@@ -13,6 +13,25 @@ canvas {
         height: 100%;
 }
 
+.navbar {
+        margin-bottom: 0;
+}
+
+.jumbotron {
+        margin: 30px;
+        /*
+        margin-top: 30px;
+        margin-bottom: 30px;
+        */
+}
+
+.floating-button {
+        position: fixed;
+        left: 20px;
+        top: 20px;
+        z-index: 99;
+}
+
 .container {
         margin:0px !important;
         padding: 0px !important;
@@ -30,6 +49,7 @@ canvas {
         background-color: rgba(255,255,255,0.5);
         padding: 10px;
         padding-right: 20px;
+        overflow-y: auto;
 }
 
 .upload-preview {

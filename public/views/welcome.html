@@ -1,12 +1,16 @@
 <div class="container">
     <div class="row welcome-row">
-        <div class="col-md-12 col-xs-12">
-            <h1>Welcome {{name}}!</h1>
-        </div>
-    </div>
-    <div class="row welcome-row">
-        <div class="col-md-12 col-xs-12">
-            <button ng-click="makeGallery()" class="btn btn-primary">Claim your #gallery</button>
-        </div>
+        <form class="col-md-6 col-md-offset-3 col-xs-12 text-center">
+            <h1><i>Welcome</i> {{name}}!</h1>
+            <p>
+                Please give us a short description of your gallery. It'll show up on the homepage, as well as on your
+                gallery page before someone presses the "generate gallery" button
+            </p>
+            <p>
+                <textarea placeholder="description of your gallery" ng-model="description" style="width: 300px; height: 100px;">
+                </textarea><br>Characters left: {{200 - description.length}}
+            </p>
+            <button ng-click="makeGallery()" type="submit" class="btn btn-primary">Claim your #gallery</button>
+        </form>
     </div>
 </div>

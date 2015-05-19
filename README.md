@@ -20,3 +20,7 @@ Provide your own keys.json file at the document root:
 Don't forget to install bower components
 
     bower install
+
+Other dependencies:
+
+    OrbitControls.js

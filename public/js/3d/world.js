@@ -28,6 +28,7 @@
         this.cameras = [];
         this.currentCamera = 0;
         this.renderer = new THREE.WebGLRenderer();
+        this.renderer.shadowMapEnabled = true;
         this.clock = new THREE.Clock();
         THREE.ImageUtils.crossOrigin = '';
 
@@ -183,21 +184,24 @@
                 this.objects[name].position.set( transformations.position[0], transformations.position[1], transformations.position[2])
             }
             else if (!transformations) {
-                debugger;c
-                this.objects[name].position.y = 7;
+                debugger;
                 switch (name.charAt(name.length-1)) {
                     case '0':
-                        this.objects[name].position.z = -this.dWall-0.5;
+                        this.objects[name].rotation.set(0, PI, 0);
+                        this.objects[name].position.set(22.5, 9, -1);
                         break;
                     case '1':
-                        this.objects[name].rotation.set(0, PI/2, 0);
-                        this.objects[name].position.x = this.dWall+0.5;
+                        this.objects[name].rotation.set(0, PI, 0);
+                        this.objects[name].position.set(7.5, 9, -1);
+                        break;
                     case '2':
                         this.objects[name].rotation.set(0, PI, 0);
-                        this.objects[name].position.z = this.dWall+0.5;
+                        this.objects[name].position.set(-7.5, 9, -1);
+                        break;
                     case '3':
-                        this.objects[name].rotation.set(0, PI/2, 0);
-                        this.objects[name].position.z = this.dWall+0.5;
+                        this.objects[name].rotation.set(0, PI, 0);
+                        this.objects[name].position.set(-22.5, 9, -1);
+                        break;
                     default:
                         break;
                 }
@@ -229,7 +233,7 @@
 
             this.add(buildAxes(100.0));
 
-            this.scene.fog = new THREE.Fog(0x00000f, 20, 100);
+            this.scene.fog = new THREE.Fog(0x00000f, 50, 100);
             this.renderer.setClearColor( self.scene.fog.color );
 
             this.addLight('hemi', 'hemisphere', null, {sky:0xffffff, ground:0x00ff00, intensity:0.5});
@@ -243,37 +247,34 @@
                 rotation:[PI/2, 0, 0]
             });
             this.addShape('wall0', self.rectangleShape(15, 10), 'phong_green', room, {
-                position:[-15, 7.5, 0],
-                rotation:[0, PI/2, 0]
-            }, { amount: 0.1, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 0.5, bevelThickness: 0.1 });
+                position:[-22.5, 7.5, 0]
+            }, { amount: 0.1, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 0.5, bevelThickness: 0.5 });
             this.addShape('wall1', self.rectangleShape(15, 10), 'phong_green', room, {
-                position:[0, 7.5, -15]
-            }, { amount: 0.1, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 0.5, bevelThickness: 0.1 });
+                position:[-7.5, 7.5, 0]
+            }, { amount: 0.1, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 0.5, bevelThickness: 0.5 });
             this.addShape('wall2', self.rectangleShape(15, 10), 'phong_green', room, {
-                position:[15, 7.5, 0],
-                rotation:[0, PI/2, 0]
-            }, { amount: 0.1, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 0.5, bevelThickness: 0.1 });
+                position:[7.5, 7.5, 0]
+            }, { amount: 0.1, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 0.5, bevelThickness: 0.5 });
             this.addShape('wall3', self.rectangleShape(15, 10), 'phong_green', room, {
-                position:[0, 7.5, 15]
-            }, { amount: 0.1, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 0.5, bevelThickness: 0.1 });
+                position:[22.5, 7.5, 0]
+            }, { amount: 0.1, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 0.5, bevelThickness: 0.5 });
 
             var walllight = new THREE.Mesh(new THREE.SphereGeometry(0.2, 10, 10), new THREE.MeshBasicMaterial({color: 0xffffff}));
 
             var dWall = this.dWall;
             var wall0light = walllight.clone();
-            wall0light.position.set(-dWall, 13, 0);
-            var wall1light = walllight.clone();
-            wall1light.position.set(0, 13, -dWall);
+            wall0light.position.set(0, 15, -20);
             var wall2light = walllight.clone();
-            wall2light.position.set(dWall, 13, 0);
-            var wall3light = walllight.clone();
-            wall3light.position.set(0, 13, dWall);
+            wall2light.position.set(0, 15, 20);
 
-            this.addLight('wall0light', 'point', {model:wall0light},{color: 0xffffff, intensity: 0.8});
-            this.addLight('wall1light', 'point', {model:wall1light},{color: 0xffffff, intensity: 0.8});
-            this.addLight('wall2light', 'point', {model:wall2light},{color: 0xffffff, intensity: 0.8});
-            this.addLight('wall3light', 'point', {model:wall3light},{color: 0xffffff, intensity: 0.8});
+            this.addLight('wall0light', 'point', {model:wall0light},{color: 0xffffff, intensity: 2});
+            this.addLight('wall2light', 'point', {model:wall2light},{color: 0xffffff, intensity: 2});
+            this.addLight('direc1', 'directional', null, {color: 0xffffff, intensity: 0.8});
+            this.lights['direc1'].position.set(0, -1, -1);
+            this.lights['direc1'].castShadow = true;
 
+            room.castShadow = true;
+            room.receiveShadow = true;
             this.add(room);
 
             // set camera
@@ -283,7 +284,7 @@
                 near: 0.1,
                 far : 1000.0
             }, true);
-            this.moveCamera(0, [0,10,5]);
+            this.moveCamera(0, [0,10,-20]);
         }
     }
 

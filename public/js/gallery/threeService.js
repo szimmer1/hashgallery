@@ -20,7 +20,8 @@
 
             return {
                 world : _world,
-                animate : _world.animate
+                animate : _world.animate.bind(_world),
+                addPicture : _world.addPicture.bind(_world)
             };
         })
 

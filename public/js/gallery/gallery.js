@@ -132,4 +132,19 @@
             }
         })
 
+        .directive('buildsTexture', function(threejsService, errorService) {
+            return {
+                restrict : 'EA',
+                link : function(scope, element, attr) {
+                    element.bind('load', function(event) {
+                        var img = event.target;
+                        threejsService.addPicture('picture_'+scope.$index, img.src, {
+                            width: img.width,
+                            height: img.height
+                        }, null, null, function() {errorService.setError("Error", "Could not generate texture "+scope.$index)})
+                    })
+                }
+            }
+        })
+
 })(angular);

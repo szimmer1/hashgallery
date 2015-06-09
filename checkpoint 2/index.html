@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>#gallery proposal</title>
+    <link rel="stylesheet" href="bootstrap.css" />
+    <link rel="stylesheet" href="font-awesome.min.css" />
+    <style>
+        .thumbnail {
+            height: 190px;
+            padding-top: 20px;
+        }
+        .thumbnail .caption {
+            font-size: 16px;
+            font-style: italic;
+        }
+        .striked {
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row" style="padding-bottom: 20px;
+  border-bottom: 5px double darkred;">
+            <div class="col-md-6">
+                <h1>#gallery <small> Project Checkpoint</small></h1>
+            </div>
+            <div class="col-md-6">
+                <h1><small>Shahar Zimmerman | CS160 Spring '15 Pang</small></h1>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 20px;">
+            <div class="col-md-12">
+                <h3>Project timeline, to date</h3>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 20px;">
+            <div class="col-md-12">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-success progress-bar-striped active" style="width: 50%">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <p class="text-center"><i class="fa fa-arrow-up"></i><br>
+                    App architecture<br>
+                    May 8</p>
+                <ul class="striked">
+                    <li>Express.js app</li>
+                    <li>Angular app</li>
+                    <li>Firebase and S3 connections</li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <p class="text-center"><i class="fa fa-arrow-up"></i><br>
+                    Graphics 1<br>
+                    May 16</p>
+                <ul class="striked">
+                    <li>Basic room</li>
+                    <li>Image texture mapping</li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <p class="text-center"><i class="fa fa-arrow-up"></i><br>
+                    Graphics 2<br>
+                    May 24</p>
+                <ul>
+                    <li>Camera angles</li>
+                    <li>Statue object with texture mapping</li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <p class="text-center"><i class="fa fa-arrow-up"></i><br>
+                    Graphics 3<br>
+                    June 8</p>
+                <ul>
+                    <li>Lighting</li>
+                    <li>Room & and sky materials & texture mapping</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <h3>App architecture</h3>
+            </div>
+            <div class="col-md-6">
+                <img src="architecture.png" class="img-responsive">
+            </div>
+            <div class="col-md-6">
+                <p>The app uses an MVC-like architecture. The controller is
+                    a Node.js program hosted on an Amazon EC2 instance. Another controller, an Angular.js program, is
+                    delivered to the client; this controller does the brunt of the work, dealing with Firebase no-SQL data store
+                    and Amazon S3 image storage. The data (model) is stored and pulled from Firebase on the client. All the views
+                    delivered to the client, and are accessed by the Angular program.</p>
+                <p>The data must store the following information: whether the user has created a gallery, which images and how many have been uploaded,
+                    metadata about those images. It looks like this:</p>
+                <img src="data.png" class="img-responsive" style="height: 300px;">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <h3>Basic room and image texture mapping</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <img src="plain_room.png" class="img-responsive">
+            </div>
+            <div class="col-md-6">
+                <p>Graphics are done in three.js. Note that the room is colored green to indicate that materials and textures are still in prototype
+                    phase. Also notice "axes" drawn in order to easily tell locations in Euclidean space.</p>
+                <p>The plain room is a scene with several polygons: a plane for the "ground", a four identical rectangle blocks with a
+                    small depth and bevel. The plane is of large yet discrete size.</p>
+                <p>Light effects are achieved using directional, ambient, and point lights. Directional lights illuminate surfaces with the
+                same diffuse light vector, and allow for shadows on affected surfaces. Point lights create the effect of a localized light, or
+                "lightbulb". Surfaces, as of now, have a specular quality. This may change after the advanced materials are programmed. All
+                lights are affected by a global dimming effect after a certain distance (three.js "fog").</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <img src="texture_mapped.png" class="img-responsive">
+            </div>
+            <div class="col-md-6">
+                <p>Texture mapping is accomplished by using the three.js TextureLoader object, and mapping to a plane polygon
+                (proportional to image dimensions) using a UV map and NEAREST strategy for selecting texture points.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

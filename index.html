@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>#gallery - Your 3d art gallery</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/hashgallery.css" />
+</head>
+<body ng-app="app">
+
+<session-flash></session-flash>
+
+<!-- Navbar / Header -->
+
+<ui-view></ui-view>
+
+<script type="text/javascript" src="lib/threejs/build/three.js"></script>
+<script type="text/javascript" src="lib/threejs/build/OrbitControls.js"></script>
+<script type="text/javascript" src="lib/underscore/underscore-min.js"></script>
+<script type="text/javascript" src="lib/angular/angular.min.js"></script>
+<script type="text/javascript" src="lib/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript" src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="lib/angular-ui-router/release/angular-ui-router.min.js"></script>
+<script type="text/javascript" src="lib/firebase/firebase.js"></script>
+<script type="text/javascript" src="lib/angularfire/dist/angularfire.js"></script>
+<script type="text/javascript" src="lib/aws-sdk-js/dist/aws-sdk.min.js"></script>
+<script type="text/javascript" src="js/3d/world.js"></script>
+<script type="text/javascript" src="js/util/errorService.js"></script>
+<script type="text/javascript" src="js/gallery/threeService.js"></script>
+<script type="text/javascript" src="js/gallery/s3Service.js"></script>
+<script type="text/javascript" src="js/gallery/gallery.js"></script>
+<script type="text/javascript" src="js/home/home.js"></script>
+<script type="text/javascript" src="js/app.js"></script>
+</body>
+</html>

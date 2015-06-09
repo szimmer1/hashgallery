@@ -15,6 +15,7 @@
             'threejsService',
             '$firebaseObject',
             '$firebaseArray',
+            '$location',
 
             function(
             $rootScope,
@@ -24,19 +25,38 @@
             errorService,
             threejsService,
             $firebaseObject,
-            $firebaseArray
+            $firebaseArray,
+            $location
         ) {
                 $scope.name = $stateParams.name;
+                var isDemo = $location.path() === '/demo';
 
-                var artistRef = new Firebase($rootScope.keys.firebaseUrl+$scope.name);
+                if (!isDemo) {
+                    var artistRef = new Firebase($rootScope.keys.firebaseUrl + $scope.name);
 
-                // load artist data
-                var artistData = $firebaseObject(artistRef);
-                artistData.galleryCreated = false;
-                var imageData = $firebaseArray(artistRef.child('/images'));
-                artistData.$loaded().then(function() {
-                    artistData.$bindTo($scope, 'artistData');
-                });
+                    // load artist data
+                    var artistData = $firebaseObject(artistRef);
+                    artistData.galleryCreated = false;
+                    var imageData = $firebaseArray(artistRef.child('/images'));
+                    artistData.$loaded().then(function () {
+                        artistData.$bindTo($scope, 'artistData');
+                    });
+                }
+                else {
+                    $scope.artistData = {
+                        images : [
+                            {
+                                url: '/landscape1.jpg'
+                            },{
+                                url: '/landscape2.jpg'
+                            },{
+                                url: '/landscape3.jpg'
+                            }
+                        ]
+                    };
+                }
+
+                $scope.currentImage = null;
 
                 $scope.description = "";
 
@@ -53,10 +73,12 @@
                     }
                 };
 
-                $scope.files = {};
-                $scope.localImage = false;
-                $scope.bucket = awsService.s3Init($rootScope.keys.s3id, $rootScope.keys.s3secret,
-                    $rootScope.keys.region, $rootScope.keys.bucket);
+                if (!isDemo) {
+                    $scope.files = {};
+                    $scope.localImage = false;
+                    $scope.bucket = awsService.s3Init($rootScope.keys.s3id, $rootScope.keys.s3secret,
+                        $rootScope.keys.region, $rootScope.keys.bucket);
+                }
 
                 // takes files object, every time a file is uploaded, callback is called
                 $scope.upload = function() {
@@ -106,12 +128,18 @@
             return {
                 restrict: 'AE',
                 link: function(scope, ele, attr) {
+                    var threeEle = threejsService.world.getDomElement();
                     scope.generate = function() {
                         $(ele).find('button').remove();
                         threejsService.world.setDim(cWidth, cHeight);
-                        $(ele).append(threejsService.world.getDomElement());
+                        $(ele).append(threeEle);
                         threejsService.animate()
-                    }
+                    };
+                    threejsService.generateKeyHandler(function(err, image) {
+                        // make DOM changes here
+                        scope.currentImage = image;
+                        scope.$apply();
+                    })
                 }
             }
         })
@@ -138,6 +166,7 @@
                 link : function(scope, element, attr) {
                     element.bind('load', function(event) {
                         var img = event.target;
+                        img.crossOrigin = "Anonymous";
                         threejsService.addPicture('picture_'+scope.$index, img.src, {
                             width: img.width,
                             height: img.height

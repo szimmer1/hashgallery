@@ -28,17 +28,12 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12 col-xs-12" ng-repeat="image in artistData.images">
-                        <div class="img-thumbnail">
+                        <div ng-class="{'img-thumbnail': true, 'selected-img': $index == currentImage}">
                             <i class="fa fa-times pull-right" ng-click="truncImage()"></i>
                             <img class="img-responsive" ng-src="{{image.url}}" builds-texture>
                         </div>
                     </div>
                 </div>
-                <!--
-                <textarea style="height:300px; width: 250px;">
-                    {{artistData | json}}
-                </textarea>
-                -->
             </div>
         </div>
     </div>

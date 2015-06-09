@@ -4,6 +4,7 @@ bower_components
 keys.js
 keys.json
 node_modules
+*.tar
 ec2_shahar.pem
 public/lib
 ec2.sh

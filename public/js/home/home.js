@@ -28,11 +28,11 @@
                 }
 
                 $scope.checkImage = function(name) {
-                    if (!$scope.imageArray[name]) {
+                    if (!($scope.imageArray && $scope.imageArray[name])) {
                         $scope.imageArray[name] = _.map(this.artist.images, function(image) {return image});
                     }
                     else {
-                        return $scope.imageArray && $scope.imageArray[name][0].url
+                        return $scope.imageArray[name][0] && $scope.imageArray[name][0].url
                     }
                 }
         }])

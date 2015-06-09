@@ -41,7 +41,8 @@
             };
 
             return {
-                s3Init: function(id, secret, region, bucket) {
+                s3Init: function(id, secret, region, bucket, isDemo) {
+                    if (isDemo) return;
                     AWS.config.update({
                         accessKeyId: id,
                         secretAccessKey: secret

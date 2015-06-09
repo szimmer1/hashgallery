@@ -20,22 +20,35 @@
                     url: '/artist/:name',
                     templateUrl: '../views/gallery.html',
                     controller: 'GalleryController'
+                })
+                .state('demo', {
+                    url: '/demo',
+                    templateUrl: '../views/demo.html',
+                    controller: 'GalleryController'
                 });
 
             $urlRouterProvider
                 .when('/artist', '/artist')
-                .otherwise('/home');
+                .otherwise(function($injector, $location) {
+                    if ($location.host() === 'localhost') {
+                        return '/demo'
+                    } else {
+                        return '/home'
+                    }
+                });
 
         })
 
         .run(function($rootScope, $http, $location) {
 
-            $http.get($location.protocol() + "://" + window.location.host+"/api/keys")
-            .success( function(data, status) {
-                $rootScope.keys = JSON.parse(data);
-            }).error( function(data, status) {
-                alert("Error on retreiving keys; "+status)
-            });
+            if ($location.host() !== 'localhost') {
+                $http.get($location.protocol() + "://" + window.location.host + "/api/keys")
+                    .success(function (data, status) {
+                        $rootScope.keys = JSON.parse(data);
+                    }).error(function (data, status) {
+                        alert("Error on retreiving keys; " + status)
+                    });
+            }
 
         })
 
